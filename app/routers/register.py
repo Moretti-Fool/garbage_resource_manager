@@ -2,7 +2,6 @@ import secrets
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-# from sqlalchemy.orm import Session
 from sqlalchemy.future import select
 from datetime import datetime, timedelta
 from config import settings

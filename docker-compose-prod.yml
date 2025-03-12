@@ -1,0 +1,79 @@
+version: "3"
+services:
+  api:
+    build: .
+    depends_on:
+      - redis
+      - postgres
+    ports:
+      - 8000:8000
+
+    volumes:
+      - .:/usr/src/app:ro
+
+    entrypoint: [ "sh", "/usr/src/app/entrypoint.sh" ]
+
+    # env_file:
+    #     - ./env
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - POOL_SIZE=${POOL_SIZE}
+      - MAX_OVERFLOW=${MAX_OVERFLOW}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - SECRET_KEY_GOOGLE_AUTH=${SECRET_KEY_GOOGLE_AUTH}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_EMAIL=${SMTP_EMAIL}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - VERIFICATION_TOKEN_EXPIRE=${VERIFICATION_TOKEN_EXPIRE}
+  redis:
+    image: "redis:latest"
+    restart: always
+    ports:
+      - "6379:6379"
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+  celery:
+    build: .
+    command: celery -A celery_tasks.tasks worker --loglevel=info
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+    depends_on:
+      - redis
+      - postgres
+
+
+  celery-beat:
+    build: .
+    command: celery -A celery_tasks.tasks beat --loglevel=info
+    environment:
+      - REDIS_URL=${REDIS_URL}
+    depends_on:
+      - redis
+
+
+volumes:
+  postgres-db:
+
+

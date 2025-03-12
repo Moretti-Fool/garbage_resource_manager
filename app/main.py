@@ -4,8 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import uploads, admin, register, login
 from app.services.cleanup import garbage_collector
 from app.services.redis_client import get_redis
-from app.models import Base
-from app.database import engine
 
 
 app = FastAPI()
@@ -28,10 +26,6 @@ app.include_router(admin.router)
 # Startup/shutdown events
 @app.on_event("startup")
 async def startup():
-    # Create tables async
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    
     # Connect to Redis
     app.state.redis = await get_redis()
     print("Connected to Redis and created tables")
