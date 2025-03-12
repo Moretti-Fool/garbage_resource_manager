@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.future import select
-# from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+# from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import AuditLog, User
 from app.utils.authentication import create_access_token, verify_password, get_current_user
@@ -15,7 +15,7 @@ router = APIRouter(
 async def login(
     response: Response,
     user_credentials: OAuth2PasswordRequestForm = Depends(), 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     if not user_credentials.username or not user_credentials.password:
         raise HTTPException(status_code=422, detail="Missing required fields")
@@ -47,7 +47,7 @@ async def login(
     return {"message": "Login successful", "access_token": access_token}
 
 @router.post("/logout")
-async def logout(response: Response, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def logout(response: Response, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     response.delete_cookie("access_token")
 
     async with db.begin():

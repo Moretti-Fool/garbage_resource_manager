@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from typing import Optional
 from passlib.context import CryptContext
 from sqlalchemy.future import select
-# from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+# from sqlalchemy.orm import Session
 from config import settings
 from app.database import get_db
 from app.models import Role, User
@@ -58,7 +58,7 @@ def decode_access_token(token: str):
 
 async def get_current_user(
     access_token: str = Cookie(None),
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     if not access_token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing access token")

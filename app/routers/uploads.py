@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, UploadFile, BackgroundTasks, HTTPException
-# from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+# from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from app.services.redis_client import redis_async as redis
 from app.models import Resource, User, AuditLog
@@ -14,7 +14,7 @@ router = APIRouter(tags=["Upload"])
 async def upload_file(
     file: UploadFile, 
     background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     try:

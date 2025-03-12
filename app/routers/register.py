@@ -1,8 +1,8 @@
 import secrets
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, Request
-# from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+# from sqlalchemy.orm import Session
 from sqlalchemy.future import select
 from datetime import datetime, timedelta
 from config import settings
@@ -22,7 +22,7 @@ router = APIRouter(
 async def register_user(
     request: Request,
     user: UserCreate,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     raw_token = secrets.token_urlsafe(32)
     hashed_token = bcrypt.hashpw(raw_token.encode(), bcrypt.gensalt()).decode()
@@ -74,7 +74,7 @@ async def register_user(
 
 
 @router.get("/verify-email")
-async def verify_email(token: str, db: Session = Depends(get_db)):
+async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
     async with db.begin():
         result = await db.execute(
             select(UserVerification).where(
