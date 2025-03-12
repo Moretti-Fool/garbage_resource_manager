@@ -4,3 +4,5 @@ notes.txt
 .env
 celerybeat-schedule
 docker-compose-dev.yml
+combine_codes.sh
+combined_codes.txt
