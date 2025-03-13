@@ -1,6 +1,9 @@
 import asyncio
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from app.database import SessionLocal
 from sqlalchemy.future import select
 from app.models import Role
@@ -9,7 +12,15 @@ from app.services.cleanup import garbage_collector
 from app.services.redis_client import get_redis
 
 
-app = FastAPI()
+app = FastAPI(
+
+    redoc_url="/redoc",
+    docs_url="/doc",
+    openapi_url="/openapi.json"
+)
+
+templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # CORS configuration
 app.add_middleware(
@@ -44,3 +55,17 @@ async def startup():
 async def shutdown():
     await app.state.redis.close()
     print("Disconnected from Redis")
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# Route to Swagger UI
+@app.get("/doc")
+async def custom_docs():
+    return RedirectResponse(url="/swagger")
+
+# Route to ReDoc
+@app.get("/redoc")
+async def custom_redoc():
+    return RedirectResponse(url="/redoc")
