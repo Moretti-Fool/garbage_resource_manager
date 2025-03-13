@@ -62,7 +62,7 @@ alembic upgrade head
 
 6️⃣ Initialize Admin User  
 ```bash
-python admin_create.py create-admin
+python admin_create.py 
 ```
 
 7️⃣ Start the Application
