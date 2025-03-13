@@ -59,7 +59,7 @@ async def register_user(
             raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
 
     # Send verification email via Celery
-    verification_link = f"http://127.0.0.1:8000/register/verify-email?token={raw_token}"
+    verification_link = f"{settings.BASE_URL}/register/verify-email?token={raw_token}"
     send_verification_email.delay(user.email, verification_link)
 
     return {"message": "Registration successful. Check your email for verification."}
