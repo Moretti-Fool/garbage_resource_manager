@@ -1,5 +1,7 @@
 # Resource Manager API
 [![Deployed on Railway](https://img.shields.io/badge/Deployed%20on-Railway-131313?style=for-the-badge&logo=railway)](https://resourcemanager-production.up.railway.app/)
+
+
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.11-green?logo=fastapi)](https://fastapi.tiangolo.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue?logo=postgresql&logoColor=white)](https://www.postgresql.org)
