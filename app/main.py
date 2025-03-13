@@ -1,6 +1,9 @@
 import asyncio
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from app.database import SessionLocal
+from sqlalchemy.future import select
+from app.models import Role
 from app.routers import uploads, admin, register, login
 from app.services.cleanup import garbage_collector
 from app.services.redis_client import get_redis
@@ -26,9 +29,15 @@ app.include_router(admin.router)
 # Startup/shutdown events
 @app.on_event("startup")
 async def startup():
+    async with SessionLocal() as db:
+        for role in ["USER", "ADMIN"]:
+            exists = await db.execute(select(Role).where(Role.name == role))
+            if not exists.scalar_one_or_none():
+                db.add(Role(name=role))
+        await db.commit()
     # Connect to Redis
     app.state.redis = await get_redis()
-    print("Connected to Redis and created tables")
+    print("Connected to Redis and created roles")
     asyncio.create_task(garbage_collector())
 
 @app.on_event("shutdown")

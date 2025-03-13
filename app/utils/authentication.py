@@ -71,7 +71,6 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     async with db.begin():
         result =  await db.execute(select(User).where(User.id == user_id))
-        # result = db.query(User).filter(User.id==user_id).first()
         user = result.scalar_one_or_none()
         if user is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
@@ -83,7 +82,8 @@ def get_current_active_user(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-def get_current_admin_user(current_user: User = Depends(get_current_user)):
-    if not current_user.role or current_user.role.name != "ADMIN":  # Ensure role exists
+
+async def get_current_admin_user(current_user: User = Depends(get_current_user)):
+    if not current_user.role or current_user.role.name != "ADMIN":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
     return current_user

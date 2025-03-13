@@ -30,13 +30,6 @@ async def register_user(
         try:
             result = await db.execute(select(Role).where(Role.name == "USER"))
             default_role = result.scalar_one_or_none()
-
-            if not default_role:
-                new_role = Role(name="USER")
-                db.add(new_role)
-                await db.flush()  # Get ID of newly created role
-                default_role = new_role  # Assign new role to user
-
             new_user = User(
                 email=user.email,
                 hashed_password=get_password_hash(user.password),

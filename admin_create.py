@@ -3,7 +3,7 @@ import asyncio
 from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 from app.database import SessionLocal  
-from app.models import Admin
+from app.models import Role, User
 from app.utils.authentication import get_password_hash
 
 app = typer.Typer()
@@ -13,23 +13,26 @@ app = typer.Typer()
 @app.command()
 def create_admin(
     email: str = typer.Option(..., prompt=True),
-    password: str = typer.Option(..., prompt=True, hide_input=True),
-    superadmin: bool = typer.Option(False, "--superadmin")
+    password: str = typer.Option(..., prompt=True, hide_input=True)
 ) -> None:
     async def _async_create_admin():
         async with SessionLocal() as db:  
             try:
+                result = await db.execute(select(Role).where(Role.name == "ADMIN"))
+                admin_role = result.scalar_one()
                 # Check for duplicates
-                result = await db.execute(select(Admin).where(Admin.email == email))
+                result = await db.execute(select(User).where(User.email == email))
                 if result.scalar_one_or_none():
-                    typer.echo(f"Error: Admin {email} already exists!")
+                    typer.echo(f"Error:  {email} already exists!")
                     return
 
                 # Create admin
-                admin = Admin(
+                admin = User(
                     email=email,
                     hashed_password=get_password_hash(password),
-                    is_superadmin=superadmin
+                    role_id=admin_role.id,
+                    is_admin=True,
+                    is_verified = True
                 )
                 db.add(admin)
                 await db.commit()
