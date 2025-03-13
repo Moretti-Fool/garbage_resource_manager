@@ -4,11 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     REDIS_URL: str
     BASE_URL: str
-    DATABASE_HOSTNAME: str
-    DATABASE_PORT: str
-    DATABASE_PASSWORD: str
-    DATABASE_NAME: str
-    DATABASE_USERNAME: str
+    DATABASE_URL: str
     SMTP_SERVER: str
     SMTP_PORT: int
     SMTP_EMAIL: str

@@ -5,11 +5,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from config import settings
 
 # Use asyncpg driver
-DATABASE_URL = (
-    f"postgresql+asyncpg://{settings.DATABASE_USERNAME}:"
-    f"{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:"
-    f"{settings.DATABASE_PORT}/{settings.DATABASE_NAME}"
-)
+DATABASE_URL = settings.DATABASE_URL
 
 
 

@@ -11,11 +11,7 @@ from app.models import Base
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url",
-    f"postgresql+asyncpg://{settings.DATABASE_USERNAME}:"
-    f"{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:"
-    f"{settings.DATABASE_PORT}/{settings.DATABASE_NAME}"
-)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
