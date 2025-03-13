@@ -7,11 +7,11 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-# Run as non-root user
+
 
 
 RUN  chmod +x entrypoint.sh
-
-USER celeryuser
+# Run as non-root user
+# USER celeryuser
 
 CMD ["bash", "entrypoint.sh"]
