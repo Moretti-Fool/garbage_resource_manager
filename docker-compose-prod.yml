@@ -17,6 +17,7 @@ services:
     #     - ./env
     environment:
       - REDIS_URL=${REDIS_URL}
+      - BASE_URL=${BASE_URL}
       - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
       - DATABASE_PORT=${DATABASE_PORT}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
