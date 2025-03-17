@@ -2,6 +2,7 @@ import logging
 import asyncio
 from celery import Celery
 from redis.asyncio import Redis as aioredis
+# from redis.asyncio import Redis, ConnectionPool
 from config import settings
 from app.database import SessionLocal
 from datetime import datetime
@@ -69,9 +70,9 @@ def resource_uploaded_mail(email: str, filename: str):
     else:
         logger.error(f"Failed to send email to {masked_email}")
 
+    
 
-
-
+    
 @celery.task(bind=True, max_retries=3, autoretry_for=(Exception,), retry_backoff=True)
 def check_pending_notifications(self):
     try:

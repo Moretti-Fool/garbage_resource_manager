@@ -27,6 +27,10 @@ async def register_user(
     hashed_token = bcrypt.hashpw(raw_token.encode(), bcrypt.gensalt()).decode()
 
     async with db.begin():  # Transaction begins
+        user_query = await db.execute(select(User).where(User.email == user.email))
+        user_already_registered = user_query.scalar_one_or_none()
+        if(user_already_registered):
+            raise HTTPException(status_code=400, detail=f"Email {user.email} is already registered")
         try:
             result = await db.execute(select(Role).where(Role.name == "USER"))
             default_role = result.scalar_one_or_none()
