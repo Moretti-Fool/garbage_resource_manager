@@ -5,6 +5,7 @@ from app.services.redis_client import redis_async as redis
 from app.models import Resource, User, AuditLog
 from app.database import get_db
 from app.utils.authentication import get_current_user
+from celery_tasks.tasks import resource_uploaded_mail
 import uuid
 
 router = APIRouter(tags=["Upload"])
@@ -28,6 +29,7 @@ async def upload_file(
             expires_at=expires_at,
             user_id=current_user.id
         )
+        resource_uploaded_mail.delay(current_user.email, file.filename)
 
         audit_log = AuditLog(
             event="File Uploaded",

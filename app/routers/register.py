@@ -9,7 +9,7 @@ from app.database import get_db
 from app.models import User, Role, UserVerification, AuditLog
 from app.schemas import UserCreate
 from app.utils.authentication import get_password_hash
-from celery_tasks.tasks import send_verification_email  # Ensure this is a valid Celery task
+from celery_tasks.tasks import send_verification_email 
 
 
 router = APIRouter(

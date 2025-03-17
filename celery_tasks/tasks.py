@@ -49,6 +49,29 @@ def send_verification_email(email: str, verification_link: str):
         logger.error(f"Failed to send verification email to {masked_email}")
 
 
+@celery.task
+def resource_uploaded_mail(email: str, filename: str):
+    """Sends email when resource is uploaded."""
+    subject = "Resource Uploaded"
+    body = f"""
+    <html>
+        <body>
+            <p>You have uploaded {filename} on {datetime.now()}:</p>
+        </body>
+    </html>
+    """
+    success = asyncio.run(send_email_async(email, subject, body))
+    
+    # Changed: Mask email in logs
+    masked_email = f"{email[:3]}***@***{email.split('@')[-1][-3:]}"
+    if success:
+        logger.info(f"Resource notification email sent to {masked_email}")
+    else:
+        logger.error(f"Failed to send email to {masked_email}")
+
+
+
+
 @celery.task(bind=True, max_retries=3, autoretry_for=(Exception,), retry_backoff=True)
 def check_pending_notifications(self):
     try:
@@ -92,4 +115,5 @@ async def async_check_pending_notifications():
                 except Exception as e:
                     logger.error(f"Error processing {resource_id}: {e}")
                     await db_session.rollback()
+
 
